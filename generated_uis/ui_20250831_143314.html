@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Modern Blog - Your Daily Dose of Inspiration</title>
+    <style>
+        /* CSS Variables for colors and fonts */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #007bff; /* Blue */
+            --accent-color: #28a745; /* Green */
+            --background-light: #f8f9fa;
+            --background-dark: #e9ecef;
+            --text-color: #343a40;
+            --light-text-color: #6c757d;
+            --white-color: #fff;
+            --border-color: #dee2e6;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+
+            --font-family-sans: 'Inter', 'Roboto', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+            --font-family-serif: 'Merriweather', 'Georgia', serif;
+
+            --header-height: 60px;
+        }
+
+        /* Base Styles & Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-family-sans);
+            margin-bottom: 0.8em;
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+
+        h1 { font-size: 2.8em; }
+        h2 { font-size: 2.2em; }
+        h3 { font-size: 1.8em; }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--white-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px var(--shadow-light);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-family: var(--font-family-serif);
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand:hover {
+            color: var(--secondary-color);
+        }
+
+        .navbar-brand::before {
+            content: '✍️'; /* A simple icon */
+            font-size: 0.8em;
+            margin-right: 8px;
+            display: none; /* Hidden by default */
+        }
+        
+        @media (min-width: 768px) {
+            .navbar-brand::before {
+                display: inline-block; /* Visible on desktop */
+            }
+        }
+
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links li a {
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease-in-out;
+        }
+
+        .nav-links li a:hover::after,
+        .nav-links li a.active::after {
+            width: 100%;
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none; /* Hidden on desktop */
+            flex-direction: column;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001; /* Above mobile menu */
+        }
+
+        .hamburger span {
+            height: 3px;
+            width: 28px;
+            background-color: var(--primary-color);
+            margin-bottom: 5px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://picsum.photos/id/1060/1600/900') center/cover no-repeat;
+            color: var(--white-color);
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3); /* Darker overlay */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.8em;
+            margin-bottom: 15px;
+            color: var(--white-color);
+            text-shadow: 2px 2px 8px var(--shadow-medium);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-content p {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 4px var(--shadow-light);
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+            opacity: 0; /* Start hidden for animation */
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Blog Posts Grid Section */
+        .blog-posts-grid {
+            padding: 60px 0;
+            background-color: var(--background-dark);
+        }
+
+        .blog-posts-grid h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .blog-posts-grid h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .blog-card {
+            background-color: var(--white-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%; /* Ensure cards are same height in a row */
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px var(--shadow-medium);
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 220px; /* Fixed height for consistency */
+            object-fit: cover;
+            object-position: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .blog-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1; /* Allows content area to fill remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h3 {
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .card-content .excerpt {
+            font-size: 1em;
+            color: var(--light-text-color);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            flex-grow: 1; /* Push button to bottom */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4; /* Limit to 4 lines */
+            -webkit-box-orient: vertical;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            align-self: flex-start; /* Align button to start of flex container */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .read-more-btn:hover {
+            background-color: #0056b3; /* Darker blue */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+            color: var(--white-color); /* Ensure text stays white */
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.9em;
+        }
+
+        .footer p {
+            margin-bottom: 0;
+        }
+
+        .footer a {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            color: var(--white-color);
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 3em;
+            }
+            .hero-content p {
+                font-size: 1.2em;
+            }
+            .grid-container {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            .navbar .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 2em; }
+            h3 { font-size: 1.5em; }
+
+            .navbar-brand {
+                font-size: 1.5em;
+            }
+
+            .nav-links {
+                display: none; /* Hide nav links by default on mobile */
+                flex-direction: column;
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                background-color: var(--white-color);
+                box-shadow: 0 5px 15px var(--shadow-light);
+                padding: 20px 0;
+                text-align: center;
+                border-top: 1px solid var(--border-color);
+                transition: transform 0.3s ease-out;
+                transform: translateY(-100%); /* Start off-screen */
+            }
+
+            .nav-links.active {
+                display: flex; /* Show when active */
+                transform: translateY(0);
+            }
+
+            .nav-links li {
+                margin: 10px 0;
+            }
+
+            .nav-links li a {
+                padding: 10px 20px;
+                font-size: 1.1em;
+                display: block;
+            }
+
+            .hamburger {
+                display: flex; /* Show hamburger icon */
+            }
+
+            .hero-section {
+                min-height: 450px;
+                padding: 80px 15px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+
+            .hero-content p {
+                font-size: 1.1em;
+            }
+
+            .blog-posts-grid {
+                padding: 40px 0;
+            }
+
+            .blog-posts-grid h2 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr; /* Single column on small mobiles */
+            }
+            
+            .blog-card {
+                margin: 0 10px; /* Add some side margin to cards */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section {
+                min-height: 380px;
+                padding: 60px 15px;
+            }
+            .hero-content h1 {
+                font-size: 2em;
+            }
+            .hero-content p {
+                font-size: 1em;
+            }
+            .blog-posts-grid h2 {
+                font-size: 1.8em;
+            }
+            .card-content h3 {
+                font-size: 1.4em;
+            }
+            .read-more-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="navbar-brand">The Modern Blog</a>
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#articles">Articles</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="hamburger" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>The Digital Canvas</h1>
+                <p>Dive into insightful articles, inspiring stories, and practical guides for the modern world.</p>
+            </div>
+        </section>
+
+        <section id="articles" class="blog-posts-grid">
+            <div class="container">
+                <h2>Latest Articles</h2>
+                <div class="grid-container">
+                    <!-- Blog Post Card 1 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/237/800/450" alt="Dog looking at camera">
+                        <div class="card-content">
+                            <h3>Mastering Responsive Design with CSS Grid</h3>
+                            <p class="excerpt">Discover the power of CSS Grid in creating fluid, responsive layouts. This comprehensive guide covers everything from basic concepts to advanced techniques, ensuring your websites look great on any device.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post Card 2 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/160/800/450" alt="Person typing on a laptop">
+                        <div class="card-content">
+                            <h3>The Art of Storytelling in Digital Media</h3>
+                            <p class="excerpt">In a world saturated with content, how do you make your message stand out? Learn the timeless principles of storytelling and how to apply them effectively across various digital platforms to captivate your audience.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post Card 3 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/15/800/450" alt="Meditating person">
+                        <div class="card-content">
+                            <h3>Mindfulness for Developers: Boosting Focus and Productivity</h3>
+                            <p class="excerpt">The fast-paced world of tech can be demanding. Explore practical mindfulness techniques designed to help developers reduce stress, enhance concentration, and maintain peak performance without burnout.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post Card 4 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/350/800/450" alt="Abstract AI generated image">
+                        <div class="card-content">
+                            <h3>Unlocking Your Creative Potential with AI Tools</h3>
+                            <p class="excerpt">Artificial intelligence is no longer just for scientists. Dive into how AI-powered tools can augment your creativity, from generating ideas and content to streamlining your design workflow and much more.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post Card 5 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/327/800/450" alt="Two people collaborating remotely">
+                        <div class="card-content">
+                            <h3>The Future of Remote Work: Trends and Predictions</h3>
+                            <p class="excerpt">Remote work has redefined the modern workplace. This article delves into emerging trends, technological advancements, and expert predictions on how remote collaboration will evolve in the coming years.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post Card 6 -->
+                    <article class="blog-card">
+                        <img src="https://picsum.photos/id/292/800/450" alt="Plant growing in a pot on a desk with laptop">
+                        <div class="card-content">
+                            <h3>Sustainable Living in the Tech Age: A Practical Guide</h3>
+                            <p class="excerpt">Can technology and sustainability coexist? Absolutely! Learn how to leverage smart devices and digital tools to reduce your environmental footprint, conserve energy, and embrace a greener lifestyle.</p>
+                            <a href="#" class="read-more-btn">Read More</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 The Modern Blog. All rights reserved. | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburgerMenu');
+            const navLinks = document.getElementById('navLinks');
+            const navItems = navLinks.querySelectorAll('a');
+
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            // Close nav when a link is clicked (for mobile)
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (navLinks.classList.contains('active')) {
+                        navLinks.classList.remove('active');
+                        hamburger.classList.remove('active');
+                    }
+                    // Remove active class from all links and add to clicked one
+                    navItems.forEach(link => link.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Simple scroll spy for active nav link (optional, but nice)
+            const sections = document.querySelectorAll('section[id]');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - document.querySelector('.navbar').offsetHeight; // Account for sticky header
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navItems.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    } else if (current === '' && link.getAttribute('href') === '#') {
+                        // If at the very top and 'Home' is #
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Set initial active link on page load
+            const initialHash = window.location.hash;
+            if (initialHash) {
+                const targetLink = document.querySelector(`.nav-links li a[href="${initialHash}"]`);
+                if (targetLink) {
+                    navItems.forEach(link => link.classList.remove('active'));
+                    targetLink.classList.add('active');
+                }
+            } else {
+                document.querySelector('.nav-links li a[href="#"]').classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
