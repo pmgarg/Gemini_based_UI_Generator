@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Blog Homepage</title>
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --secondary-color: #607D8B; /* Blue Grey */
+            --accent-color: #FFC107; /* Amber */
+            --background-light: #F8F8F8;
+            --background-dark: #212121;
+            --text-light: #ECEFF1;
+            --text-dark: #333;
+            --card-background: #FFFFFF;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --border-color: #E0E0E0;
+
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            --font-size-base: 16px;
+            --line-height-base: 1.6;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            margin-bottom: 0.8em;
+            line-height: 1.2;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Sticky Navigation Bar */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 10px var(--shadow-light);
+            padding: 1rem 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .sticky-nav .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sticky-nav .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .sticky-nav .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .sticky-nav .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .sticky-nav .nav-links a {
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .sticky-nav .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .sticky-nav .nav-links a:hover::after,
+        .sticky-nav .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .sticky-nav .nav-links a:hover,
+        .sticky-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://picsum.photos/seed/bloghero/1920/800') center/cover no-repeat;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-light);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 1.5rem;
+        }
+
+        .hero-content {
+            z-index: 1;
+            animation: fadeInScale 1s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .hero-section p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-light);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Grid (Articles + Sidebar) */
+        .main-content {
+            padding: 4rem 0;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        /* Blog Post Cards */
+        .blog-posts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+        }
+
+        .blog-card .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .blog-card .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card .card-category {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .blog-card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .blog-card .read-more {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .blog-card .read-more:hover {
+            color: var(--secondary-color);
+            transform: translateX(5px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            padding: 1.5rem;
+        }
+
+        .sidebar h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar .categories-list {
+            list-style: none;
+        }
+
+        .sidebar .categories-list li {
+            margin-bottom: 0.8rem;
+        }
+
+        .sidebar .categories-list a {
+            display: block;
+            padding: 0.7rem 1rem;
+            background-color: var(--background-light);
+            border-radius: 8px;
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .sidebar .categories-list a:hover {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            transform: translateX(5px);
+        }
+        
+        .sidebar .categories-list a::before {
+            content: '›';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .categories-list a:hover::before {
+            color: var(--text-light);
+        }
+        
+        /* About & Contact Sections */
+        .section-padding {
+            padding: 6rem 0;
+            min-height: 80vh; /* Ensure sections have height for navigation */
+            display: flex;
+            align-items: center;
+        }
+
+        .section-padding h2 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-padding h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .about-section p {
+            max-width: 800px;
+            margin: 0 auto 1.5rem auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 2rem auto 0 auto;
+            background-color: var(--card-background);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .content-grid {
+                grid-template-columns: 2.5fr 1fr; /* Blog posts wider than sidebar */
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-section h1 {
+                font-size: 3rem;
+            }
+            .hero-section p {
+                font-size: 1.2rem;
+            }
+            .sticky-nav .nav-links {
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .sticky-nav .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .sticky-nav .nav-links {
+                width: 100%;
+                justify-content: space-around;
+                gap: 0;
+            }
+            .sticky-nav .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .hero-section {
+                min-height: 400px;
+            }
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            .main-content {
+                padding: 2rem 0;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr; /* Stack blog posts and sidebar */
+            }
+
+            .blog-posts {
+                grid-template-columns: 1fr; /* Single column for blog cards */
+            }
+
+            .sidebar {
+                margin-top: 2rem;
+            }
+            
+            .section-padding {
+                padding: 4rem 0;
+            }
+
+            .section-padding h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Utility for SPA (display none for hidden sections) */
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sticky-nav">
+        <div class="container nav-content">
+            <a href="#home" class="logo nav-link" data-target="home">MyBlog</a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link" data-target="home">Home</a></li>
+                <li><a href="#articles-section" class="nav-link" data-target="articles-section">Articles</a></li>
+                <li><a href="#about-section" class="nav-link" data-target="about-section">About</a></li>
+                <li><a href="#contact-section" class="nav-link" data-target="contact-section">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="home" class="hero-section section-content">
+        <div class="hero-content">
+            <h1>Welcome to MyBlog</h1>
+            <p>Your daily dose of insights, stories, and inspiration. Explore a world of knowledge with us.</p>
+        </div>
+    </header>
+
+    <main id="articles-section" class="main-content section-content hidden-section">
+        <div class="container content-grid">
+            <section class="blog-posts">
+                <h2>Latest Articles</h2>
+                <!-- Blog Post Card 1 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/tech/400/220" alt="Technology Trends" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Technology</span>
+                        <h3>The Future of AI in Everyday Life</h3>
+                        <p>Artificial Intelligence is no longer a concept of science fiction; it's rapidly integrating into our daily routines, from smart assistants to autonomous vehicles. Discover the profound impact AI will have on our future.</p>
+                        <a href="#article-ai" class="read-more">Read More</a>
+                    </div>
+                </div>
+                <!-- Blog Post Card 2 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/travel/400/220" alt="Travel Destinations" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Travel</span>
+                        <h3>Top 5 Undiscovered European Destinations</h3>
+                        <p>Escape the crowds and explore the hidden gems of Europe. From picturesque villages to breathtaking landscapes, these destinations offer unique experiences away from the tourist traps.</p>
+                        <a href="#article-travel" class="read-more">Read More</a>
+                    </div>
+                </div>
+                <!-- Blog Post Card 3 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/food/400/220" alt="Healthy Eating" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Health & Food</span>
+                        <h3>Mastering Plant-Based Cooking at Home</h3>
+                        <p>Embrace a healthier lifestyle with delicious and easy plant-based recipes. Learn essential tips and tricks to transform your kitchen into a vegan culinary haven.</p>
+                        <a href="#article-food" class="read-more">Read More</a>
+                    </div>
+                </div>
+                <!-- Blog Post Card 4 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/productivity/400/220" alt="Productivity Hacks" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Lifestyle</span>
+                        <h3>10 Productivity Hacks for Remote Workers</h3>
+                        <p>Working from home comes with its challenges. Boost your efficiency and maintain a healthy work-life balance with these proven strategies for remote productivity.</p>
+                        <a href="#article-productivity" class="read-more">Read More</a>
+                    </div>
+                </div>
+                <!-- Blog Post Card 5 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/design/400/220" alt="Web Design Trends" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Design</span>
+                        <h3>The Evolution of Web Design: From Skeuomorphism to Flat</h3>
+                        <p>Dive into the fascinating history of web design, exploring the major shifts in aesthetics and user experience, and what's next for the digital canvas.</p>
+                        <a href="#article-design" class="read-more">Read More</a>
+                    </div>
+                </div>
+                <!-- Blog Post Card 6 -->
+                <div class="blog-card">
+                    <img src="https://picsum.photos/seed/finance/400/220" alt="Personal Finance" class="card-image">
+                    <div class="card-content">
+                        <span class="card-category">Finance</span>
+                        <h3>Building Your Emergency Fund: A Step-by-Step Guide</h3>
+                        <p>Secure your financial future by establishing a robust emergency fund. This guide breaks down the process into manageable steps, helping you achieve peace of mind.</p>
+                        <a href="#article-finance" class="read-more">Read More</a>
+                    </div>
+                </div>
+            </section>
+            
+            <aside class="sidebar">
+                <h3>Categories</h3>
+                <ul class="categories-list">
+                    <li><a href="#category-technology">Technology (12)</a></li>
+                    <li><a href="#category-travel">Travel (8)</a></li>
+                    <li><a href="#category-health">Health & Food (15)</a></li>
+                    <li><a href="#category-lifestyle">Lifestyle (20)</a></li>
+                    <li><a href="#category-design">Design (7)</a></li>
+                    <li><a href="#category-finance">Finance (10)</a></li>
+                    <li><a href="#category-education">Education (14)</a></li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+
+    <section id="about-section" class="about-section section-padding section-content hidden-section">
+        <div class="container">
+            <h2>About MyBlog</h2>
+            <p>Welcome to MyBlog, your ultimate source for insightful articles, engaging stories, and practical guides across a myriad of topics. Our mission is to inspire, educate, and entertain our readers with high-quality content that makes a difference.</p>
+            <p>Founded in 2023, MyBlog started as a passion project to share knowledge and spark conversations. Today, we are a growing community of writers and readers dedicated to exploring the world through words. We believe in the power of information to transform lives and are committed to delivering fresh perspectives on technology, travel, health, lifestyle, and more.</p>
+            <p>Join us on this exciting journey as we delve into the subjects that matter most. We're constantly striving to bring you the best content, and your feedback is invaluable. Thank you for being a part of the MyBlog family!</p>
+        </div>
+    </section>
+
+    <section id="contact-section" class="contact-section section-padding section-content hidden-section">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Have a question, a suggestion, or just want to say hello? We'd love to hear from you!</p>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 MyBlog. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section-content');
+            const contactForm = document.getElementById('contactForm');
+
+            // Function to hide all sections
+            const hideAllSections = () => {
+                sections.forEach(section => {
+                    section.classList.add('hidden-section');
+                });
+            };
+
+            // Function to show a specific section
+            const showSection = (targetId) => {
+                hideAllSections();
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden-section');
+                    // Scroll to top of the section, accounting for fixed nav
+                    const navHeight = document.querySelector('.sticky-nav').offsetHeight;
+                    window.scrollTo({
+                        top: targetSection.offsetTop - navHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            };
+
+            // Function to set active nav link
+            const setActiveNavLink = (targetId) => {
+                navLinks.forEach(link => {
+                    if (link.dataset.target === targetId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            };
+
+            // Event listener for navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default anchor jump
+                    const targetId = link.dataset.target;
+                    showSection(targetId);
+                    setActiveNavLink(targetId);
+                    // Update URL hash without causing a page reload
+                    history.pushState(null, '', `#${targetId}`);
+                });
+            });
+
+            // Handle initial load or direct access via hash
+            const handleInitialLoad = () => {
+                const initialHash = window.location.hash.substring(1); // Remove '#'
+                if (initialHash && document.getElementById(initialHash)) {
+                    showSection(initialHash);
+                    setActiveNavLink(initialHash);
+                } else {
+                    // Default to home section if no valid hash or no hash
+                    showSection('home');
+                    setActiveNavLink('home');
+                    history.replaceState(null, '', '#home'); // Set #home as default in URL
+                }
+            };
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', handleInitialLoad);
+
+            // Initial call to set up the page state
+            handleInitialLoad();
+
+            // Contact Form Submission (prevent default)
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Thank you for your message! We will get back to you shortly.');
+                    contactForm.reset(); // Clear the form
+                });
+            }
+
+            // Make "Read More" links on article cards do nothing for now
+            const readMoreLinks = document.querySelectorAll('.blog-card .read-more');
+            readMoreLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Could show a modal, or just an alert for this example
+                    alert('This would navigate to a detailed article page in a full blog. For this single-page example, it just prevents default.');
+                });
+            });
+
+            // Categories links - just prevent default
+            const categoryLinks = document.querySelectorAll('.sidebar .categories-list a');
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert(`Filtering by category: ${link.textContent.split('(')[0].trim()}`);
+                    // In a real application, this would filter the articles
+                });
+            });
+        });
+    </script>
+
+    <script>
+    // Prevent all links from navigating away
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle all link clicks
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                e.preventDefault();
+                const link = e.target.tagName === 'A' ? e.target : e.target.closest('a');
+                const href = link.getAttribute('href');
+                
+                // Handle anchor links (e.g., #section)
+                if (href && href.startsWith('#')) {
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    
+                    // Handle tab switching if using tabs
+                    handleTabSwitch(targetId);
+                }
+                
+                // Log navigation attempt for debugging
+                console.log('Navigation prevented:', href);
+            }
+        });
+        
+        // Function to handle tab switching
+        function handleTabSwitch(tabId) {
+            // Hide all tab contents
+            const allTabs = document.querySelectorAll('.tab-content, .tab-pane, [role="tabpanel"]');
+            allTabs.forEach(tab => {
+                tab.style.display = 'none';
+                tab.classList.remove('active', 'show');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                selectedTab.classList.add('active', 'show');
+            }
+            
+            // Update active tab button
+            const allTabButtons = document.querySelectorAll('.tab-button, .nav-link, [role="tab"]');
+            allTabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeButton = document.querySelector(`[href="#${tabId}"], [data-target="#${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+        
+        // Prevent form submissions from navigating
+        document.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submission prevented');
+            // You can add form handling logic here
+            alert('Form submitted! (This is a prototype - no actual submission)');
+        });
+    });
+    </script>
+    
+</body>
+</html>
