@@ -263,5 +263,3 @@ Contributions welcome! Feel free to:
 5. **Save Good Prompts**: Keep descriptions that work well for reuse
 
 ---
-
-**Built with ❤️ using Flask and Google Gemini AI**
